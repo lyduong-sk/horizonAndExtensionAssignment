@@ -1,0 +1,20 @@
+name: Run JEST Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+  actions: read
+  checks: write
+jobs:
+  jest-test:
+    name: Run JEST Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # checkout the repo
+      - run: find . -type f -name package.json -exec bash -c 'yarn install --cwd $(dirname {})' \;
+      - run: yarn jest # run tests (configured to use jest-junit reporter)

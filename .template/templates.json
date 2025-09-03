@@ -1,0 +1,26 @@
+[
+  {
+    "filename": "skeduloPackage.njk",
+    "props": ["name", "description"],
+    "outputDirectory": ".",
+    "outputFilename": "skeduloPackage.json"
+  },
+  {
+    "filename": "sonar-project.njk",
+    "props": ["projectKey"],
+    "outputDirectory": ".",
+    "outputFilename": "sonar-project.properties"
+  },
+  {
+    "filename": "package.njk",
+    "props": ["name", "description"],
+    "outputDirectory": ".",
+    "outputFilename": "package.json"
+  },
+  {
+    "filename": "README.njk",
+    "props": ["name", "description", "customer"],
+    "outputDirectory": ".",
+    "outputFilename": "README.md"
+  }
+]

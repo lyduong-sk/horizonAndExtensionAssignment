@@ -1,0 +1,69 @@
+name: Perform deployment (development tenant)
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: read
+  actions: read
+  checks: write
+jobs:
+  deploy:
+    name: Perform deployment (development tenant) run
+    env:
+      SKED_ACCESS_TOKEN: ${{ secrets.DEV_SKED_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      SKED_ENVIRONMENT: ${{ secrets.SKED_ENVIRONMENT }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for Skedulo token
+        if: ${{ env.SKED_ACCESS_TOKEN == '' }}
+        run: echo "No development tenant token found, if you wish to use this action ensure the DEV_SKED_TOKEN secret is set. For more info see the CXProjectTemplate wiki"; exit 0 # exit code 0 to prevent the whole job from failing if there is no dry run token, as this job is optional
+
+      - name: Check for NPM token
+        if: ${{ env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN == '' }} # only perform this step if there is a sked token
+        run: echo "No NPM token found, this action requires one to work. Ensure the NPM_TOKEN secret is set. For more info see the CXProjectTemplate wiki"; exit 1 #
+
+      - name: Check for SKED_ENVIRONMENT variable
+        if: ${{ env.SKED_ENVIRONMENT == '' }}
+        run: echo "No SKED_ENVIRONMENT variable set, defaulting to production "; export SKED_ENVIRONMENT=production
+
+      - name: Checkout Code
+        if: ${{ env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN != '' }} # only continue if we have both tokens
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: ${{ success() && env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Configure NPM authentication
+        if: ${{ success() && env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN != '' }}
+        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+
+      - name: Install Skedulo CLI
+        if: ${{ success() && env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN != '' }}
+        run: yarn global add @skedulo/cli
+
+      - name: Test Sked CLI
+        if: ${{ success() && env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN != '' }}
+        run: sked --version
+
+      - name: Login to Skedulo
+        if: ${{ success() && env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN != '' }}
+        run: sked tenant login access-token --alias dev --set-default -e $SKED_ENVIRONMENT
+      - name: Perform deployment
+        if: ${{ success() && env.SKED_ACCESS_TOKEN != '' && env.NPM_TOKEN != '' }}
+        run: |
+          if sked package deploy local --alias dev --package . > deployment.log 2>&1; then
+            # If the deployment fails
+            if grep -q "Deployment Failed" deployment.log; then
+              echo "Deployment failed. Here is the log:"
+              cat deployment.log
+              exit 1
+            else
+              echo "Dry-run succeeded"
+              cat deployment.log
+            fi
+          fi

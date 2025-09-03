@@ -1,0 +1,10 @@
+mkdir -p src/object-model/custom-fields
+mkdir -p src/object-model/custom-objects
+mkdir -p src/functions
+mkdir -p src/horizon-component-bundles
+mkdir -p src/horizon-pages
+mkdir -p src/horizon-templates
+mkdir -p src/mobile-extensions
+mkdir -p src/triggered-actions
+mkdir -p src/user-roles
+mkdir -p src/webhooks

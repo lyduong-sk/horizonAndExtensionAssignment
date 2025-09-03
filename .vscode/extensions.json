@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "graphql.vscode-graphql-syntax",
+    "graphql.vscode-graphql",
+    "graphql.vscode-graphql-execution"
+  ]
+}
