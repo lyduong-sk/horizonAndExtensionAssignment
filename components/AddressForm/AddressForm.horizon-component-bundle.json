@@ -1,0 +1,10 @@
+{
+  "metadata": {
+    "type": "HorizonComponentBundle"
+  },
+  "name": "AddressForm",
+  "version": "0.0.1",
+  "label": "AddressForm",
+  "description": "This is a custom address form",
+  "source": "./"
+}

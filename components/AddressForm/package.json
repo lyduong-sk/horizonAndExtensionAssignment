@@ -1,0 +1,36 @@
+{
+  "name": "AddressForm",
+  "description": "This is a custom address form",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "analyze": "horizon-scripts analyze",
+    "bootstrap": "yarn install --frozen-lockfile --audit --ignore-scripts",
+    "preview": "horizon-scripts preview",
+    "lint": "horizon-scripts lint --quiet",
+    "lint:all": "horizon-scripts lint",
+    "lint:fix": "horizon-scripts lint --fix",
+    "test": "horizon-scripts test",
+    "test:watch": "horizon-scripts test --watch",
+    "test:cov": "horizon-scripts test --coverage",
+    "build": "horizon-scripts build",
+    "build:watch": "horizon-scripts build --watch",
+    "check:types": "horizon-scripts check-types"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@skedulo/breeze-ui": "^1.24.3",
+    "@skedulo/breeze-ui-react": "^1.24.2",
+    "@skedulo/horizon-scripts": "0.2.16",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "shadow-dom-testing-library": "^1.11.2",
+    "typescript": "^5.8.3"
+  }
+}
