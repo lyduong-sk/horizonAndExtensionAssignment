@@ -15,21 +15,46 @@ registerComponent(
   name,
   'AddressForm',
   AddressForm,
-  // Metadata is optional, but if provided, it will be used to display the component in the Page Builder
-  // Only components with metadata will be available in the Page Builder.
   {
-    name: 'Example Component',
-    description: 'Example Component for testing horizon-scripts',
+    name: 'Lys Address Form',
+    description: 'Configurable Address Form for mapping address fields to Skedulo Object fields',
     properties: {
-      // Define any properties that the component will use from Page Builder
-      // See PropertyMetadata interface for the complete schema definition
-      countStart: {
-        type: 'number',
-        title: 'Count start',
-        description: 'The number to start the count at',
+      streetLabel: {
+        type: 'string',
+        title: 'Street Address Label',
+        description: 'Custom label for the Street Address field',
+        required: true
+      },
+      streetMappedField: {
+        type: 'string',
+        title: 'Street Address Mapped Field',
+        description: 'Skedulo Object field to map for Street Address',
+        required: true
+      },
+      cityLabel: {
+        type: 'string',
+        title: 'City Label',
+        description: 'Custom label for the City field',
+        required: true
+      },
+      cityMappedField: {
+        type: 'string',
+        title: 'City Mapped Field',
+        description: 'Skedulo Object field to map for City',
+        required: true
+      },
+      stateLabel: {
+        type: 'string',
+        title: 'State Label',
+        description: 'Custom label for the State field',
+        required: true
+      },
+      stateMappedField: {
+        type: 'string',
+        title: 'State Mapped Field',
+        description: 'Skedulo Object field to map for State',
         required: true
       }
     }
   } satisfies ComponentMetadata
 )
-
