@@ -1,5 +1,6 @@
-import { useState, ReactNode, FC } from 'react'
+import { useState, ReactNode, FC, useEffect } from 'react'
 import { Button, Link, InputText } from '@skedulo/breeze-ui-react'
+import { ApiClientV1 } from '@skedulo/horizon-core'
 
 // Address field config type
 interface AddressFieldConfig {
@@ -29,7 +30,7 @@ const addressFields: AddressFieldConfig[] = [
 type AddressFormState = {
   [key: string]: {
     label: string
-    mappedField: string
+    mappedFieldValue: string
   }
 }
 
@@ -60,13 +61,29 @@ export const AddressForm: FC<Props> = props => {
   // Initialize state for each address field
   const [fields, setFields] = useState<AddressFormState>(() =>
     addressFields.reduce((acc, field) => {
-      acc[field.key] = { label: field.defaultLabel, mappedField: '' }
+      const mappedFieldName = props[`${field.key}MappedField` as keyof Props] as string | undefined
+      const mappedFieldValue = mappedFieldName && record ? (record[mappedFieldName] ?? '') : ''
+      acc[field.key] = { label: field.defaultLabel, mappedFieldValue }
       return acc
     }, {} as AddressFormState)
   )
 
+  // Ensure fields update when record or mapped field props change
+  useEffect(() => {
+    setFields(
+      addressFields.reduce((acc, field) => {
+        const mappedFieldName = props[`${field.key}MappedField` as keyof Props] as string | undefined
+        const mappedFieldValue = mappedFieldName && record ? (record[mappedFieldName] ?? '') : ''
+        acc[field.key] = { label: field.defaultLabel, mappedFieldValue }
+        return acc
+      }, {} as AddressFormState)
+    )
+  }, [record, props.streetMappedField, props.cityMappedField, props.stateMappedField])
+
+  console.log('fields', fields)
+
   // Handle input changes
-  const handleFieldChange = (key: string, type: 'label' | 'mappedField', value: string) => {
+  const handleFieldChange = (key: string, type: 'label' | 'mappedFieldValue', value: string) => {
     const updated = {
       ...fields,
       [key]: {
@@ -95,26 +112,55 @@ export const AddressForm: FC<Props> = props => {
             {isResourcePage && <div>Resource: {recordContext?.resourceName}</div>}
           </div>
         )}
-        <form className="tw-space-y-8">
+        <form
+          className="address-form tw-space-y-8"
+          onSubmit={e => {
+            e.preventDefault()
+          }}
+        >
           {addressFields.map(field => {
             // Use the label prop if truthy, otherwise use default label
             const labelValue = props[`${field.key}Label`]
               ? props[`${field.key}Label`]
               : `Custom label for ${field.defaultLabel}`
             return (
-              <div key={field.key} className="tw-grid tw-items-center">
-                <InputText
-                  label={`${labelValue}`}
-                  value={fields[field.key].mappedField}
-                  onChange={e => handleFieldChange(field.key, 'mappedField', e.target.value)}
-                  name={`${field.key}-mappedField`}
-                  id={`${field.key}-mappedField`}
-                  placeholder={field.mappedFieldPlaceholder}
-                  className="tw-w-full tw-flat"
-                />
+              <div key={field.key} className="tw-grid tw-grid-cols-1 md:tw-grid-cols-5 tw-gap-4 tw-items-center">
+                <div className="tw-col-span-3">
+                  <InputText
+                    label={`${labelValue}`}
+                    value={fields[field.key].mappedFieldValue}
+                    onChange={e => handleFieldChange(field.key, 'mappedFieldValue', e.target.value)}
+                    name={`${field.key}-mappedFieldValue`}
+                    id={`${field.key}-mappedFieldValue`}
+                    placeholder={field.mappedFieldPlaceholder}
+                    className="tw-w-full tw-flat"
+                  />
+                </div>
               </div>
             )
           })}
+          <div className="tw-flex tw-mt-8">
+            <button
+              type="button"
+              className="tw-bg-blue-600 tw-text-white tw-px-6 tw-py-2 tw-rounded tw-flat tw-font-semibold tw-shadow-sm hover:tw-bg-blue-700 focus:tw-outline-none"
+              onClick={() => {
+                // Build the update object
+                const updateObj: Record<string, string> = {}
+                if (props.streetMappedField) {
+                  updateObj[props.streetMappedField] = fields.street.mappedFieldValue
+                }
+                if (props.cityMappedField) {
+                  updateObj[props.cityMappedField] = fields.city.mappedFieldValue
+                }
+                if (props.stateMappedField) {
+                  updateObj[props.stateMappedField] = fields.state.mappedFieldValue
+                }
+                console.log('Mapped update object:', updateObj)
+              }}
+            >
+              Save
+            </button>
+          </div>
         </form>
         <div className="tw-mt-8">{children}</div>
       </div>
