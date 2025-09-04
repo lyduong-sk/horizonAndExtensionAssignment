@@ -1,6 +1,7 @@
 import { useState, ReactNode, FC, useEffect } from 'react'
-import { Button, Link, InputText } from '@skedulo/breeze-ui-react'
-import { ApiClientV1 } from '@skedulo/horizon-core'
+import { Button, InputText } from '@skedulo/breeze-ui-react'
+import { gql } from '@apollo/client'
+import { useGraphQLMutation } from '@skedulo/horizon-core'
 
 // Address field config type
 interface IAddressFieldConfig {
@@ -54,11 +55,19 @@ type TProps = {
   recordContext?: IRecordContext
 }
 
+const UPDATE_ACCOUNTS_MUTATION = gql`
+  mutation updateAccounts($input: UpdateAccounts!) {
+    schema {
+      updateAccounts(input: $input)
+    }
+  }
+`
+
 export const AddressForm: FC<TProps> = props => {
   /* Common */
   const { children, onChange, record, recordContext } = props
-  console.log('props', props)
-  window['addressFormProps'] = props // For debugging purposes
+  // console.log('props', props)
+  // (window as any)['addressFormProps'] = props // For debugging purposes
 
   /* Initial Data */
   // Set initial data from props and record
@@ -103,6 +112,11 @@ export const AddressForm: FC<TProps> = props => {
   const isResourcePage = !!recordContext?.resourceUid
 
   /* Render */
+  const {mutate, loading, error} = useGraphQLMutation({
+    mutation: UPDATE_ACCOUNTS_MUTATION,
+    resourceName: 'Accounts'
+  })
+
   return (
     <div className="tw-flex tw-justify-center tw-min-h-screen tw-bg-gray-50">
       <div className="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-8 tw-w-full tw-max-w-xl">
@@ -120,49 +134,45 @@ export const AddressForm: FC<TProps> = props => {
             e.preventDefault()
           }}
         >
-          {addressFields.map(field => {
-            // Use the label prop if truthy, otherwise use default label
-            const labelValue = props[`${field.key}Label`]
-              ? props[`${field.key}Label`]
-              : `Custom label for ${field.defaultLabel}`
-            return (
-              <div key={field.key} className="tw-grid tw-grid-cols-1 md:tw-grid-cols-5 tw-gap-4 tw-items-center">
-                <div className="tw-col-span-3">
-                  <InputText
-                    label={`${labelValue}`}
-                    value={fields[field.key].mappedFieldValue}
-                    onChange={e => handleFieldChange(field.key, 'mappedFieldValue', e.target.value)}
-                    name={`${field.key}-mappedFieldValue`}
-                    id={`${field.key}-mappedFieldValue`}
-                    placeholder={field.mappedFieldPlaceholder}
-                    className="tw-w-full tw-flat"
-                  />
-                </div>
-              </div>
-            )
-          })}
-          <div className="tw-flex tw-mt-8">
-            <button
-              type="button"
-              className="tw-bg-blue-600 tw-text-white tw-px-6 tw-py-2 tw-rounded tw-flat tw-font-semibold tw-shadow-sm hover:tw-bg-blue-700 focus:tw-outline-none"
-              onClick={() => {
-                // Build the update object
-                const updateObj: Record<string, string> = {}
-                if (props.streetMappedField) {
-                  updateObj[props.streetMappedField] = fields.street.mappedFieldValue
+          {/* Address Fields */}
+          {addressFields.map(field => (
+            <div key={field.key} className="tw-flex tw-flex-col tw-gap-2">
+              <label className="tw-font-semibold tw-text-gray-700">{fields[field.key].label}</label>
+              <InputText
+                value={fields[field.key].mappedFieldValue}
+                placeholder={field.mappedFieldPlaceholder}
+                onChange={e =>
+                  handleFieldChange(field.key, 'mappedFieldValue', (e.target as HTMLInputElement)?.value || '')
                 }
-                if (props.cityMappedField) {
-                  updateObj[props.cityMappedField] = fields.city.mappedFieldValue
+              />
+            </div>
+          ))}
+          {/* Save Button */}
+          <Button
+            className="tw-mt-6"
+
+            // disabled={saving}
+            onClick={async () => {
+              const input: any = {
+                UID: recordContext?.objectUid || record?.uid || record?.id
+              }
+              addressFields.forEach(field => {
+                const mappedFieldName = props[`${field.key}MappedField` as keyof TProps] as string | undefined
+                if (mappedFieldName) {
+                  input[mappedFieldName] = fields[field.key].mappedFieldValue
                 }
-                if (props.stateMappedField) {
-                  updateObj[props.stateMappedField] = fields.state.mappedFieldValue
-                }
-                console.log('Mapped update object:', updateObj)
-              }}
-            >
-              Save
-            </button>
-          </div>
+              })
+              try {
+                await mutate({ variables: { input } })
+                alert('Address updated successfully!')
+              } catch (err: any) {
+                alert('Failed to update address: ' + (err && err.message ? err.message : String(err)))
+              }
+            }}
+          >
+            {loading ? 'Saving...' : 'Save'}
+          </Button>
+          {error && <div className="tw-text-red-600 tw-mt-2">Error: {error.message}</div>}
         </form>
         <div className="tw-mt-8">{children}</div>
       </div>

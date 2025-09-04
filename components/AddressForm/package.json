@@ -34,6 +34,9 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@apollo/client": "^4.0.4"
+    "@apollo/client": "4.0.4",
+    "@skedulo/horizon-core": "1.4.0",
+    "graphql": "^16.11.0",
+    "rxjs": "^7.8.2"
   }
 }
