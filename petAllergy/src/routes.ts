@@ -76,13 +76,12 @@ function getRoutes(): FunctionRoute[] {
       const resourceMap = new Map(enrichedResources.map(resource => [resource.UID, resource]))
       const jobMap = new Map(enrichedJobs.map(job => [job.UID, job]))
 
-      const allocations = featureModel.allocations
       // Tag allocations with attribute requirements if job has pet
-      allocations.forEach(allocation => {
+      featureModel.allocations.forEach(allocation => {
         const job = jobMap.get(allocation.groupId)
         if (job && job.HasPet) {
           allocation.attributeRequirements = allocation.attributeRequirements || []
-          allocation.attributeRequirements.push({ id: 'hasPetConstraint' })
+          allocation.attributeRequirements.push({ id: 'PetOk' })
         }
       })
       // Tag resources with attributes if NOT allergic to pets
@@ -90,7 +89,7 @@ function getRoutes(): FunctionRoute[] {
         const enrichedResource = resourceMap.get(resource.id)
         if (enrichedResource && !enrichedResource.IsAllergicToPet) {
           resource.attributes = resource.attributes || []
-          resource.attributes.push({ id: 'hasPetConstraint' })
+          resource.attributes.push({ id: 'PetOk' })
         }
       })
 
