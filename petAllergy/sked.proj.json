@@ -1,0 +1,8 @@
+{
+  "type": "function",
+  "version": "2",
+  "name": "petAllergy",
+  "description": "Function Handler Boilerplate",
+  "runtime": "nodejs22.x",
+  "settings": {}
+}

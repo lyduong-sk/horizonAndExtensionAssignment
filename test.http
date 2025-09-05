@@ -1,0 +1,45 @@
+### Test Pet Allergy Optimization Extension
+POST http://127.0.0.1:3000/test-optimization-transformer
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2FwaS5hdS5za2VkdWxvLmNvbS9hdXRoL3Rva2VuIiwiYXVkIjoiemRsTkZZZ1VGWUJ4SGxZYU1NZHU1QWt5Mktpek1Nc2EiLCJqdGkiOiJ0Y2llc3VuaFlNMGF0bENUSklzWUVMSjVqNlpnWWExVCIsImh0dHBzOi8vYXBpLnNrZWR1bG8uY29tL3ZlbiI6eyJ1c2VyX2lkIjoiMDAwMWU0OGQtNGFkMC00OTRiLTg0ZjItMjkxZGE0ZDUxYThmIn0sImh0dHBzOi8vYXBpLnNrZWR1bG8uY29tL3VzZXJfaWQiOiJhdXRoMHwwMDAxZTQ4ZC00YWQwLTQ5NGItODRmMi0yOTFkYTRkNTFhOGYiLCJodHRwczovL2FwaS5za2VkdWxvLmNvbS9vcmdhbml6YXRpb25faWQiOiJza182Zjg4MzI5MTBjZjM0NmI5OTUzZTA1N2I2NTE5OGFkNyIsImh0dHBzOi8vYXBpLnNrZWR1bG8uY29tL3VzZXJuYW1lIjoibHkuZHVvbmcrYm9vdGNhbXBAc2tlZHVsby5jb20iLCJodHRwczovL2FwaS5za2VkdWxvLmNvbS9yZXNvdXJjZV9pZCI6bnVsbCwiaHR0cHM6Ly9hcGkuc2tlZHVsby5jb20vcm9sZXMiOlsiYWRtaW5pc3RyYXRvciJdLCJzdWIiOiJhdXRoMHwwMDAxZTQ4ZC00YWQwLTQ5NGItODRmMi0yOTFkYTRkNTFhOGYiLCJodHRwczovL2FwaS5za2VkdWxvLmNvbS92ZW5kb3IiOiJza2VkdWxvIn0.c0oQXn-PXmqP_vvf-8rFCsFvhPkpJn-PF1dnEUMbCxI
+
+{
+  "resourceIds": [
+    "00053197-95ca-4f8e-b386-a870d5f68266",
+    "000562b9-e99f-4f20-af3b-9d1d78252c9e"
+  ],
+  "jobIds": [
+    "0014acc2-4b1b-4108-8823-6fff1d4c021e",
+    "0014c15d-aab4-49b0-8da9-ec188c8aa7fa"
+  ],
+  "regionId": "0003c89c-b85a-486b-8b5d-45687e222508",
+  "scheduleWindow": {
+    "start": "2024-11-04T08:00:00.000Z",
+    "end": "2024-11-09T08:00:00.000Z"
+  },
+  "timezone": "Europe/Brussels",
+  "options": {
+    "respectSchedule": false,
+    "full": false,
+    "ignoreTravelTime": false,
+    "ignoreTravelTimeFirstJob": true,
+    "ignoreTravelTimeLastJob": true,
+    "minimizeResources": false,
+    "maxTravelTimeBetweenLocations": null,
+    "respectAllocationTimes": false,
+    "respectAllocationTimesOverTimeConstraints": false,
+    "balanceAbsoluteWorkload": false,
+    "randomizeResources": false,
+    "objectiveWeights": {
+      "preferredResources": 10,
+      "minimizeDisruption": 10,
+      "balanceAbsoluteWorkload": 60,
+      "travelTime": 10,
+      "minimizeResources": 0,
+      "softSkills": 10,
+      "jobsPriority": 10
+    },
+    "enablePartiallyAllocatedGroups": true,
+    "waitingSynchronizationMode": "groupsOnly"
+  }
+}
