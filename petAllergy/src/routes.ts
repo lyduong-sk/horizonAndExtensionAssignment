@@ -59,75 +59,49 @@ function getRoutes(): FunctionRoute[] {
         },
         limits
       )
-      // For now, just log context info for debugging
-      console.log('Initialized Pulse Solution Services context:', context)
 
       /* Transform */
       const { productData, featureModel } = transformerInput
       // Fetch resources with IsAllergicToPet using Pulse Solution Services
       const enrichedResources = await fetchResourcesWithAllergy(transformerInput, context)
-      console.log('petAllergy > enrichedResources', enrichedResources)
+      console.log('--- start ---')
+      console.log('petAllergy > enrichedResources', JSON.stringify(enrichedResources))
+      console.log('--- end ---')
       // Fetch jobs with HasPet using Pulse Solution Services
       const enrichedJobs = await fetchJobsWithHasPet(transformerInput, context)
-      console.log('petAllergy > enrichedJobs', enrichedJobs)
+      console.log('--- start ---')
+      console.log('petAllergy > enrichedJobs', JSON.stringify(enrichedJobs))
+      console.log('--- end ---')
       // Build maps for fast lookup
       const resourceMap = new Map(enrichedResources.map(resource => [resource.UID, resource]))
       const jobMap = new Map(enrichedJobs.map(job => [job.UID, job]))
 
-      console.log('petAllergy > transformerInput', transformerInput)
-      const jobs = productData.jobs
-      const resources = productData.resources
       const allocations = featureModel.allocations
-
-      // Get job & resource
-      const jobMapFromProductData = new Map(jobs.map(job => [job.UID, job]))
-      const resourceMapFromProductData = new Map(resources.map(resource => [resource.UID, resource]))
-
-      // Get job & resources with custom fields (HasPet & IsAllergicToPet)
-      // [Agent Job]
-
-
-      // Filter out
-      const filteredAllocations = allocations.filter(allocation => {
-        // Find job by groupId, JobId, or JobUID
-        console.log('petAllergy > allocation', allocation)
-        let job
-        if (allocation.groupId && jobMap.has(allocation.groupId)) {
-          job = jobMap.get(allocation.groupId)
-          //@ts-ignore
-        } else if (allocation.JobId && jobMap.has(allocation.JobId)) {
-          //@ts-ignore
-          job = jobMap.get(allocation.JobId)
-          //@ts-ignore
-        } else if (allocation.JobUID && jobMap.has(allocation.JobUID)) {
-          //@ts-ignore
-          job = jobMap.get(allocation.JobUID)
+      // Tag allocations with attribute requirements if job has pet
+      allocations.forEach(allocation => {
+        const job = jobMap.get(allocation.groupId)
+        if (job && job.HasPet) {
+          allocation.attributeRequirements = allocation.attributeRequirements || []
+          allocation.attributeRequirements.push({ id: 'hasPetConstraint' })
         }
-        // Find resource by resourceId using enriched data
-        let resource = undefined
-        if (allocation.resourceId && resourceMap.has(allocation.resourceId)) {
-          resource = resourceMap.get(allocation.resourceId)
+      })
+      // Tag resources with attributes if NOT allergic to pets
+      featureModel.resources.forEach(resource => {
+        const enrichedResource = resourceMap.get(resource.id)
+        if (enrichedResource && !enrichedResource.IsAllergicToPet) {
+          resource.attributes = resource.attributes || []
+          resource.attributes.push({ id: 'hasPetConstraint' })
         }
-        if (!job || !resource) {
-          return true
-        }
-        // Use custom field from enriched job and resource
-        const hasPet = (job as any).HasPet
-        const isAllergicToPet = (resource as any).IsAllergicToPet
-
-        // Exclude these
-        return !(hasPet && isAllergicToPet)
       })
 
       /* Build new feature model with filtered allocations */
-      const newFeatureModel = {
-        ...featureModel,
-        allocations: filteredAllocations
-      }
+      console.log('--- start ---')
+      console.log('petAllergy > featureModel', JSON.stringify(featureModel))
+      console.log('--- end ---')
 
       return {
         productData,
-        featureModel: newFeatureModel
+        featureModel
       }
     })
   ]
