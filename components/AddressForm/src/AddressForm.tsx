@@ -2,6 +2,8 @@ import { useState, ReactNode, FC, useEffect } from 'react'
 import { Button, InputText } from '@skedulo/breeze-ui-react'
 import { gql } from '@apollo/client'
 import { useGraphQLMutation } from '@skedulo/horizon-core'
+import { ToastItem } from './Toast'
+import { ToastContainer } from './ToastContainer'
 
 // Address field config type
 interface IAddressFieldConfig {
@@ -66,8 +68,10 @@ const UPDATE_ACCOUNTS_MUTATION = gql`
 export const AddressForm: FC<TProps> = props => {
   /* Common */
   const { children, onChange, record, recordContext } = props
-  // console.log('props', props)
-  // (window as any)['addressFormProps'] = props // For debugging purposes
+  const {mutate, loading, error} = useGraphQLMutation({
+    mutation: UPDATE_ACCOUNTS_MUTATION,
+    resourceName: 'Accounts'
+  })
 
   /* Initial Data */
   // Set initial data from props and record
@@ -111,14 +115,20 @@ export const AddressForm: FC<TProps> = props => {
   const recordId = recordContext?.objectUid
   const isResourcePage = !!recordContext?.resourceUid
 
-  /* Render */
-  const {mutate, loading, error} = useGraphQLMutation({
-    mutation: UPDATE_ACCOUNTS_MUTATION,
-    resourceName: 'Accounts'
-  })
 
+
+  /* Toast */
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const pushToast = (partial: Omit<ToastItem, 'id'>) => {
+    setToasts(prev => [...prev, { id: Math.random().toString(36).slice(2), ...partial }]);
+  };
+  const removeToast = (id: string) => setToasts(prev => prev.filter(t => t.id !== id));
+
+
+  /* Render */
   return (
     <div className="tw-flex tw-justify-center tw-min-h-screen tw-bg-gray-50">
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
       <div className="tw-bg-white tw-rounded-lg tw-shadow-md tw-p-8 tw-w-full tw-max-w-xl">
         <h2 className="tw-mb-6 tw-font-bold tw-text-2xl tw-text-gray-800">Configurable Address Form</h2>
         {record && (
@@ -150,23 +160,24 @@ export const AddressForm: FC<TProps> = props => {
           {/* Save Button */}
           <Button
             className="tw-mt-6"
-
-            // disabled={saving}
             onClick={async () => {
               const input: any = {
                 UID: recordContext?.objectUid || record?.uid || record?.id
-              }
+              };
               addressFields.forEach(field => {
-                const mappedFieldName = props[`${field.key}MappedField` as keyof TProps] as string | undefined
+                const mappedFieldName = props[`${field.key}MappedField` as keyof TProps] as string | undefined;
                 if (mappedFieldName) {
-                  input[mappedFieldName] = fields[field.key].mappedFieldValue
+                  input[mappedFieldName] = fields[field.key].mappedFieldValue;
                 }
-              })
+              });
               try {
-                await mutate({ variables: { input } })
-                alert('Address updated successfully!')
+                await mutate({ variables: { input } });
+                pushToast({ type: 'success', message: 'Address updated successfully!' });
               } catch (err: any) {
-                alert('Failed to update address: ' + (err && err.message ? err.message : String(err)))
+                pushToast({
+                  type: 'danger',
+                  message: 'Failed to update address: ' + (err?.message || String(err))
+                });
               }
             }}
           >
