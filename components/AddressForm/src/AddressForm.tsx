@@ -5,7 +5,6 @@ import { useGraphQLMutation } from '@skedulo/horizon-core'
 import { ToastItem } from './Toast'
 import { ToastContainer } from './ToastContainer'
 
-// Address field config type
 interface IAddressFieldConfig {
   key: string
   defaultLabel: string
@@ -37,7 +36,6 @@ type TAddressFormState = {
   }
 }
 
-// RecordContext type for Page Builder context
 interface IRecordContext {
   objectUid?: string
   resourceUid?: string
@@ -68,6 +66,7 @@ const UPDATE_ACCOUNTS_MUTATION = gql`
 export const AddressForm: FC<TProps> = props => {
   /* Common */
   const { children, onChange, record, recordContext } = props
+  console.log('AddressForm props:', props)
   const {mutate, loading, error} = useGraphQLMutation({
     mutation: UPDATE_ACCOUNTS_MUTATION,
     resourceName: 'Accounts'
