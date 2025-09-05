@@ -1,5 +1,16 @@
 import { TransformerInput, TransformerOutput } from '@skedulo/optimization-manager-client'
 
+/**
+ * Transforms the schedule by enforcing the pet allergy constraint:
+ * Engineers (resources) who are allergic to pets will not be assigned to jobs where HasPet is true.
+ * If job.HasPet === true and resource.IsAllergicToPet === true, allocation is excluded.
+ *
+ * @param transformerInput - The input containing jobs, resources, and feature model.
+ * @returns The output with filtered allocations in the feature model.
+ *
+ * @example
+ * // If job.HasPet === true and resource.IsAllergicToPet === true, allocation is excluded.
+ */
 const transformSchedule = async (transformerInput: TransformerInput): Promise<TransformerOutput> => {
   const { productData, featureModel } = transformerInput
   console.log('petAllergy > transformerInput', transformerInput)

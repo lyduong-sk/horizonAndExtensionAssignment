@@ -27,6 +27,7 @@
   "dependencies": {
     "@skedulo/function-utilities": "^0.0.7",
     "@skedulo/optimization-manager-client": "^1.24.0",
+    "@skedulo/pulse-solution-services": "^0.0.21",
     "@skedulo/sdk-utilities": "0.2.36",
     "@types/lodash": "4.14.197",
     "axios": "1.7.7",
