@@ -27,9 +27,6 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
 
   /* Initial Properties */
   const [values, setValues] = useState<AddressFormProperties>({ ...properties })
-  // useEffect(() => {
-  //   setValues({ ...properties })
-  // }, [properties])
 
   const handleChange = useCallback(
     (field: keyof AddressFormProperties) => (e: any) => {
@@ -43,14 +40,6 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
     },
     [values]
   )
-
-  /* Save properties */
-  // const handleSave = useCallback(() => {
-  //   console.log('values', values)
-  //   debugger
-  //   onPropertiesChange({...values})
-  //   pushToast({ type: 'success', message: 'Values saved!' })
-  // }, [values, onPropertiesChange])
 
   return (
     <div>
@@ -123,9 +112,6 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
           </TableRow>
         </TableBody>
       </Table>
-      <div className="tw-mt-4">
-        {/*<Button onClick={handleSave}>Save</Button>*/}
-      </div>
     </div>
   )
 }
