@@ -2,8 +2,8 @@ import { useState, ReactNode, FC, useEffect } from 'react'
 import { Button, InputText } from '@skedulo/breeze-ui-react'
 import { gql } from '@apollo/client'
 import { useGraphQLMutation } from '@skedulo/horizon-core'
-import { ToastItem } from './Toast'
-import { ToastContainer } from './ToastContainer'
+import { IToastItem } from '../Toast'
+import { ToastContainer } from '../Toast/ToastContainer'
 
 interface IAddressFieldConfig {
   key: string
@@ -109,21 +109,17 @@ export const AddressForm: FC<TProps> = props => {
     if (onChange) onChange(updated)
   }
 
-  /* Data for rendering */
-  // Display record info for demonstration
-  const recordName = record?.name || 'Unknown'
-  const recordId = recordContext?.objectUid
-  const isResourcePage = !!recordContext?.resourceUid
-
-
-
   /* Toast */
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const pushToast = (partial: Omit<ToastItem, 'id'>) => {
+  const [toasts, setToasts] = useState<IToastItem[]>([]);
+  const pushToast = (partial: Omit<IToastItem, 'id'>) => {
     setToasts(prev => [...prev, { id: Math.random().toString(36).slice(2), ...partial }]);
   };
   const removeToast = (id: string) => setToasts(prev => prev.filter(t => t.id !== id));
 
+  /* Data for rendering */
+  const recordName = record?.name || 'Unknown'
+  const recordId = recordContext?.objectUid
+  const isResourcePage = !!recordContext?.resourceUid
 
   /* Render */
   return (

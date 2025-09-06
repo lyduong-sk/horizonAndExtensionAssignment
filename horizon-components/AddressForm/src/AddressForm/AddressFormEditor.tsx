@@ -1,7 +1,7 @@
 import { InputText, Table, TableHead, TableBody, TableRow, TableCell, Button } from '@skedulo/breeze-ui-react'
 import React, { useCallback, useEffect, useState } from 'react'
-import { ToastItem } from './Toast'
-import { ToastContainer } from './ToastContainer'
+import { IToastItem } from '../Toast'
+import { ToastContainer } from '../Toast/ToastContainer'
 
 export type AddressFormProperties = {
   streetLabel: string
@@ -19,8 +19,8 @@ export type AddressFormEditorProps = {
 
 export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties, onPropertiesChange }) => {
   /* Toast */
-  const [toasts, setToasts] = useState<ToastItem[]>([])
-  const pushToast = (partial: Omit<ToastItem, 'id'>) => {
+  const [toasts, setToasts] = useState<IToastItem[]>([])
+  const pushToast = (partial: Omit<IToastItem, 'id'>) => {
     setToasts(prev => [...prev, { id: Math.random().toString(36).slice(2), ...partial }])
   }
   const removeToast = (id: string) => setToasts(prev => prev.filter(t => t.id !== id))

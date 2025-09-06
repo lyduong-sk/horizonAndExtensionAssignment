@@ -1,23 +1,26 @@
 import { FC, useEffect } from 'react';
 import { Alert } from '@skedulo/breeze-ui-react';
 
-export interface ToastItem {
+export interface IToastItem {
   id: string;
   type?: 'info' | 'success' | 'warning' | 'danger';
   message: string;
   timeout?: number;
 }
 
-interface ToastProps extends ToastItem {
+interface IToastProps extends IToastItem {
   onClose: (id: string) => void;
 }
 
-export const Toast: FC<ToastProps> = ({ id, type = 'info', message, timeout = 4000, onClose }) => {
+export const Toast: FC<IToastProps> = ({ id, type = 'info', message, timeout = 4000, onClose }) => {
+
+  /* Auto clear toast */
   useEffect(() => {
-    // const t = setTimeout(() => onClose(id), timeout);
-    // return () => clearTimeout(t);
+    const toastTimeout = setTimeout(() => onClose(id), timeout);
+    return () => clearTimeout(toastTimeout);
   }, [id, timeout, onClose]);
 
+  /* Render */
   return (
     <div className="tw-shadow-lg tw-rounded tw-overflow-hidden tw-w-72 tw-bg-white tw-p-4">
       <Alert

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { AllTheProviders } from '@skedulo/horizon-core'
-import { AddressForm } from './AddressForm'
+import { AddressForm } from './index'
 
 describe('AddressForm - the example component', () => {
   beforeEach(() => {
