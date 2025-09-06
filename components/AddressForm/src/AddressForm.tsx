@@ -89,7 +89,8 @@ export const AddressForm: FC<TProps> = props => {
       addressFields.reduce((prevFieldObj, nextFieldObj) => {
         const mappedFieldName = props[`${nextFieldObj.key}MappedField` as keyof TProps] as string | undefined
         const mappedFieldValue = mappedFieldName && record ? (record[mappedFieldName] ?? '') : ''
-        prevFieldObj[nextFieldObj.key] = { label: nextFieldObj.defaultLabel, mappedFieldValue }
+        const fieldLabel = props[`${nextFieldObj.key}Label` as keyof TProps] || nextFieldObj.defaultLabel
+        prevFieldObj[nextFieldObj.key] = { label: fieldLabel, mappedFieldValue }
         return prevFieldObj
       }, {} as TAddressFormState)
     )

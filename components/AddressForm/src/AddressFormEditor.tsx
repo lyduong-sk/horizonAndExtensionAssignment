@@ -36,7 +36,10 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
       const newValue = e.detail?.value ?? ''
       const newValues = { ...values, [field]: newValue }
       setValues(newValues)
-      onPropertiesChange({ ...newValues })
+      onPropertiesChange({
+        ...properties,
+        [field]: newValue
+      })
     },
     [values]
   )

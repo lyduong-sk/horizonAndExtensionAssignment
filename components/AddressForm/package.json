@@ -15,7 +15,8 @@
     "test:cov": "horizon-scripts test --coverage",
     "build": "horizon-scripts build",
     "build:watch": "horizon-scripts build --watch",
-    "check:types": "horizon-scripts check-types"
+    "check:types": "horizon-scripts check-types",
+    "deploy": "sked artifacts horizon-component-bundle upsert -f AddressForm.horizon-component-bundle.json --name \"Ly's Horizon Component\""
   },
   "license": "MIT",
   "devDependencies": {
