@@ -13,7 +13,7 @@
     "format": "prettier --write  --ignore-path .prettierignore",
     "deploy": "sked artifacts function upsert -f state.json -a bootcamp:lyduong",
     "compile": "export NODE_OPTIONS=--openssl-legacy-provider && webpack --mode=production",
-    "start": "yarn compile && sked function dev . -p 3000"
+    "start": "yarn compile && sked function dev  -p 3000"
   },
   "devDependencies": {
     "@types/node": "18.11.9",
