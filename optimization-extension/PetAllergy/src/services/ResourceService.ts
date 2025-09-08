@@ -1,12 +1,6 @@
 import { TransformerInput } from '@skedulo/optimization-manager-client'
 import { ExecutionContext } from '@skedulo/pulse-solution-services'
 
-/**
- * Fetches resources with custom field IsAllergicToPet using Pulse Solution Services.
- * @param transformerInput - The optimization extension input
- * @param context - The initialized Pulse Solution Services execution context
- * @returns Array of resources with UID, Name, and IsAllergicToPet
- */
 export default async function fetchResourcesWithAllergy(
   transformerInput: TransformerInput,
   context: ExecutionContext

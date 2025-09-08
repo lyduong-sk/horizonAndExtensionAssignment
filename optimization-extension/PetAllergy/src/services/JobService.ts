@@ -1,12 +1,6 @@
 import { TransformerInput } from '@skedulo/optimization-manager-client'
 import { ExecutionContext } from '@skedulo/pulse-solution-services'
 
-/**
- * Fetches jobs with custom field HasPet using Pulse Solution Services.
- * @param transformerInput - The optimization extension input
- * @param context - The initialized Pulse Solution Services execution context
- * @returns Array of jobs with UID, Name, and HasPet
- */
 export default async function fetchJobsWithHasPet(
   transformerInput: TransformerInput,
   context: ExecutionContext
