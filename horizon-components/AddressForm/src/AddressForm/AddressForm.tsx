@@ -1,60 +1,11 @@
-import { useState, ReactNode, FC, useEffect } from 'react'
+import { useState, FC, useEffect } from 'react'
 import { Button, InputText } from '@skedulo/breeze-ui-react'
 import { gql } from '@apollo/client'
 import { useGraphQLMutation } from '@skedulo/horizon-core'
 import { IToastItem } from '../Toast'
 import { ToastContainer } from '../Toast/ToastContainer'
-import { buildAddressMutationInput } from './formUtils/addressFormUtils'
-
-interface IAddressFieldConfig {
-  key: string
-  defaultLabel: string
-  mappedFieldPlaceholder: string
-}
-
-const addressFields: IAddressFieldConfig[] = [
-  {
-    key: 'street',
-    defaultLabel: 'Street Address',
-    mappedFieldPlaceholder: 'e.g. 123 Main St, 456 Oak Ave'
-  },
-  {
-    key: 'city',
-    defaultLabel: 'City',
-    mappedFieldPlaceholder: 'e.g. New York, Los Angeles'
-  },
-  {
-    key: 'state',
-    defaultLabel: 'State',
-    mappedFieldPlaceholder: 'e.g. NY, CA'
-  }
-]
-
-type TAddressFormState = {
-  [key: string]: {
-    label: string
-    mappedFieldValue: string
-  }
-}
-
-interface IRecordContext {
-  objectUid?: string
-  resourceUid?: string
-  resourceName?: string
-}
-
-type TProps = {
-  streetLabel?: string
-  streetMappedField?: string
-  cityLabel?: string
-  cityMappedField?: string
-  stateLabel?: string
-  stateMappedField?: string
-  children?: ReactNode
-  onChange?: (state: TAddressFormState) => void
-  record?: any
-  recordContext?: IRecordContext
-}
+import { buildAddressMutationInput, buildInitialFields, addressFields } from './addressFormUtils'
+import { TProps, TAddressFormState } from './AddressForm.type'
 
 const UPDATE_JOBS_MUTATION = gql`
   mutation updateJob($updateInput: UpdateJobs!) {
@@ -72,17 +23,7 @@ const UPDATE_ACCOUNTS_MUTATION = gql`
   }
 `
 
-export const buildInitialFields = (props: TProps, record?: any): TAddressFormState =>
-  addressFields.reduce((prevFieldObj, currFieldObj) => {
-    const mappedFieldName = props[`${currFieldObj.key}MappedField` as keyof TProps] as string | undefined
-    const mappedFieldValue = mappedFieldName && record ? (record[mappedFieldName] ?? '') : ''
-    const fieldLabel = props[`${currFieldObj.key}Label` as keyof TProps] || currFieldObj.defaultLabel
-    prevFieldObj[currFieldObj.key] = { label: fieldLabel, mappedFieldValue }
-    return prevFieldObj
-  }, {} as TAddressFormState)
-
 export const AddressForm: FC<TProps> = props => {
-
   /* Common */
   const { children, onChange, record, recordContext } = props
   const { mutate, loading, error } = useGraphQLMutation({
