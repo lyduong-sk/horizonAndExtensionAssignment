@@ -27,6 +27,9 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
 
   /* Initial Properties */
   const [values, setValues] = useState<AddressFormProperties>({ ...properties })
+  useEffect(() => {
+    setValues({ ...properties })
+  }, [properties])
 
   const handleChange = useCallback(
     (field: keyof AddressFormProperties) => (e: any) => {
@@ -38,9 +41,10 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
         [field]: newValue
       })
     },
-    [values]
+    [values, properties, onPropertiesChange]
   )
 
+  /* Render */
   return (
     <div>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
@@ -52,6 +56,7 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
             <TableCell>
               <InputText
                 value={values.streetLabel}
+                data-testid="street-label-input"
                 onChange={handleChange('streetLabel')}
                 size="full"
                 placeholder="Street Label"
@@ -61,6 +66,7 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
             <TableCell>
               <InputText
                 value={values.streetMappedField}
+                data-testid="street-mapped-input"
                 onChange={handleChange('streetMappedField')}
                 size="full"
                 placeholder="Street Mapped Field"
@@ -73,6 +79,7 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
             <TableCell>
               <InputText
                 value={values.cityLabel}
+                data-testid="city-label-input"
                 onChange={handleChange('cityLabel')}
                 size="full"
                 placeholder="City Label"
@@ -82,6 +89,7 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
             <TableCell>
               <InputText
                 value={values.cityMappedField}
+                data-testid="city-mapped-input"
                 onChange={handleChange('cityMappedField')}
                 size="full"
                 placeholder="City Mapped Field"
@@ -94,6 +102,7 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
             <TableCell>
               <InputText
                 value={values.stateLabel}
+                data-testid="state-label-input"
                 onChange={handleChange('stateLabel')}
                 size="full"
                 placeholder="State Label"
@@ -103,6 +112,7 @@ export const AddressFormEditor: React.FC<AddressFormEditorProps> = ({ properties
             <TableCell>
               <InputText
                 value={values.stateMappedField}
+                data-testid="state-mapped-input"
                 onChange={handleChange('stateMappedField')}
                 size="full"
                 placeholder="State Mapped Field"

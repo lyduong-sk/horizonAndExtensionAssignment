@@ -1,7 +1,7 @@
 import { ComponentMetadata, registerComponent } from '@skedulo/horizon-core'
 
 import { name } from '../package.json'
-import { AddressForm } from './AddressForm'
+import { AddressForm } from './AddressForm/AddressForm'
 import { AddressFormEditor } from './AddressForm/AddressFormEditor'
 
 registerComponent(name, 'AddressFormEditor', AddressFormEditor, {

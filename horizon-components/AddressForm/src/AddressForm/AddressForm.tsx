@@ -56,44 +56,47 @@ type TProps = {
   recordContext?: IRecordContext
 }
 
-const UPDATE_ACCOUNTS_MUTATION = gql`
-    mutation updateAccounts($input: UpdateAccounts!) {
-        schema {
-            updateAccounts(input: $input)
-        }
+const UPDATE_JOBS_MUTATION = gql`
+  mutation updateJob($updateInput: UpdateJobs!) {
+    schema {
+      updateJobs(input: $updateInput)
     }
+  }
 `
 
+const UPDATE_ACCOUNTS_MUTATION = gql`
+  mutation updateAccounts($input: UpdateAccounts!) {
+    schema {
+      updateAccounts(input: $input)
+    }
+  }
+`
+
+export const buildInitialFields = (props: TProps, record?: any): TAddressFormState =>
+  addressFields.reduce((prevFieldObj, currFieldObj) => {
+    const mappedFieldName = props[`${currFieldObj.key}MappedField` as keyof TProps] as string | undefined
+    const mappedFieldValue = mappedFieldName && record ? (record[mappedFieldName] ?? '') : ''
+    const fieldLabel = props[`${currFieldObj.key}Label` as keyof TProps] || currFieldObj.defaultLabel
+    prevFieldObj[currFieldObj.key] = { label: fieldLabel, mappedFieldValue }
+    return prevFieldObj
+  }, {} as TAddressFormState)
+
 export const AddressForm: FC<TProps> = props => {
+
   /* Common */
   const { children, onChange, record, recordContext } = props
   const { mutate, loading, error } = useGraphQLMutation({
-    mutation: UPDATE_ACCOUNTS_MUTATION,
+    mutation: UPDATE_ACCOUNTS_MUTATION, // TODO: Infer from input fields to update for account/jobs/etc...
     resourceName: 'Accounts'
   })
 
   /* Initial Data */
   // Set initial data from props and record
-  const [fields, setFields] = useState<TAddressFormState>(() =>
-    addressFields.reduce((prevFieldObj, currFieldObj) => {
-      const mappedFieldName = props[`${currFieldObj.key}MappedField` as keyof TProps] as string | undefined
-      const mappedFieldValue = mappedFieldName && record ? (record[mappedFieldName] ?? '') : ''
-      prevFieldObj[currFieldObj.key] = { label: currFieldObj.defaultLabel, mappedFieldValue }
-      return prevFieldObj
-    }, {} as TAddressFormState)
-  )
+  const [fields, setFields] = useState<TAddressFormState>(() => buildInitialFields(props, record))
 
   // Update fields when record or mapped field props change
   useEffect(() => {
-    setFields(
-      addressFields.reduce((prevFieldObj, nextFieldObj) => {
-        const mappedFieldName = props[`${nextFieldObj.key}MappedField` as keyof TProps] as string | undefined
-        const mappedFieldValue = mappedFieldName && record ? (record[mappedFieldName] ?? '') : ''
-        const fieldLabel = props[`${nextFieldObj.key}Label` as keyof TProps] || nextFieldObj.defaultLabel
-        prevFieldObj[nextFieldObj.key] = { label: fieldLabel, mappedFieldValue }
-        return prevFieldObj
-      }, {} as TAddressFormState)
-    )
+    setFields(buildInitialFields(props, record))
   }, [record, props.streetMappedField, props.cityMappedField, props.stateMappedField])
 
   // Handle input changes
@@ -148,6 +151,7 @@ export const AddressForm: FC<TProps> = props => {
                 label={fields[field.key].label}
                 value={fields[field.key].mappedFieldValue}
                 placeholder={field.mappedFieldPlaceholder}
+                data-testid={`address-input-${field.key}`}
                 onChange={e =>
                   handleFieldChange(field.key, 'mappedFieldValue', (e.target as HTMLInputElement)?.value || '')
                 }
@@ -157,6 +161,7 @@ export const AddressForm: FC<TProps> = props => {
           {/* Save Button */}
           <Button
             className="tw-mt-6"
+            data-testid="address-save-button"
             onClick={async () => {
               const input = buildAddressMutationInput(fields, props, record, recordContext)
               try {
